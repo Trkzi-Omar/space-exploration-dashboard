@@ -1,66 +1,131 @@
 import express, { Request, Response } from 'express';
+import { Pool } from 'pg';
 import cors from 'cors';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const NASA_API_BASE_URL = process.env.NASA_API_BASE_URL;
-const NASA_API_KEY = process.env.NASA_API_KEY;
-const APOD_ENDPOINT = process.env.APOD_ENDPOINT;
-const MARS_ROVER_ENDPOINT = process.env.MARS_ROVER_ENDPOINT;
+const PORT: number = parseInt(process.env.PORT || '5000', 10);
+const NASA_API_BASE_URL: string = process.env.NASA_API_BASE_URL || '';
+const NASA_API_KEY: string = process.env.NASA_API_KEY || '';
+const MARS_ROVER_ENDPOINT: string = process.env.MARS_ROVER_ENDPOINT || '';
+
+// In-memory cache object
+interface CacheData {
+    data: any;
+    timestamp: number;
+}
+const cache: { [key: string]: CacheData } = {};
+const CACHE_DURATION: number = 60 * 60 * 1000; // Cache for 1 hour
 
 app.use(cors());
 
-// Route to fetch the Astronomy Picture of the Day
-app.get('/nasa/apod', async (req: Request, res: Response) => {
-  try {
-    if (!APOD_ENDPOINT || !NASA_API_BASE_URL || !NASA_API_KEY) {
-      throw new Error('Missing necessary environment variables for APOD endpoint');
+// Function to check if data is cached and still valid
+function isCacheValid(key: string): boolean {
+    return cache[key] !== undefined && Date.now() - cache[key].timestamp < CACHE_DURATION;
+}
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+// Define the type for the photo object
+interface Photo {
+    id: number;
+    img_src: string;
+    earth_date: string;
+    rover: {
+        name: string;
+    };
+}
+
+// Function to store data in Postgres
+const storePhotoInDB = async (photo: Photo): Promise<void> => {
+    const { id, img_src, earth_date, rover } = photo;
+    const sqlQuery = `INSERT INTO mars_photos (id, img_src, earth_date, rover_name) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING;`;
+    try {
+        await pool.query(sqlQuery, [id, img_src, earth_date, rover.name]);
+    } catch (error) {
+        console.error('Error storing photo in database:', error);
     }
+};
 
-    const response = await axios.get(`${NASA_API_BASE_URL}${APOD_ENDPOINT}?api_key=${NASA_API_KEY}`);
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching data from NASA API:', error);
-    res.status(500).json({ error: 'Failed to fetch data from NASA API' });
-  }
-});
+export class MarsRoverService {
+    static async fetchMarsRoverPhotos(sol: number, page: number, rover: string = 'curiosity'): Promise<Photo | null> {
+        const cacheKey: string = `mars-photos-${sol}-${page}`;
 
-// Route to fetch Mars Rover photos
-app.get('/nasa/mars-photos', async (req: Request, res: Response) => {
-  try {
-    if (!MARS_ROVER_ENDPOINT || !NASA_API_BASE_URL || !NASA_API_KEY) {
-      throw new Error('Missing necessary environment variables for Mars Rover endpoint');
+        // Check if the data is cached
+        if (isCacheValid(cacheKey)) {
+            console.log('Returning cached data');
+            return cache[cacheKey].data.photo;
+        }
+
+        if (!MARS_ROVER_ENDPOINT || !NASA_API_BASE_URL || !NASA_API_KEY) {
+            console.error('Missing necessary environment variables for Mars Rover endpoint');
+            return null;
+        }
+
+        const endpoint: string = MARS_ROVER_ENDPOINT.replace('{rover}', rover);
+
+        try {
+            // Fetch data from NASA API
+            const response = await axios.get(`${NASA_API_BASE_URL}${endpoint}?sol=${sol}&api_key=${NASA_API_KEY}`, {
+                timeout: 10000, // 10 seconds timeout
+            });
+
+            const photos: Photo[] = response.data.photos;
+            const photo: Photo | undefined = photos[page - 1];
+
+            if (photo) {
+                // Store photo in database
+                await storePhotoInDB(photo);
+                // Cache the response
+                cache[cacheKey] = { data: { photo, page, total: photos.length }, timestamp: Date.now() };
+                return photo;
+            } else {
+                console.warn('No photo found for this index');
+                return null;
+            }
+        } catch (error) {
+            const axiosError = error as AxiosError;
+            if (axios.isAxiosError(axiosError)) {
+                if (axiosError.response && axiosError.response.status === 429) {
+                    console.error('Rate limit exceeded. Please try again later.');
+                } else if (axiosError.code === 'ETIMEDOUT') {
+                    console.error('Connection timed out. Please try again later.');
+                } else {
+                    console.error('Error fetching Mars Rover photos:', axiosError);
+                }
+            } else {
+                console.error('Unexpected error:', error);
+            }
+            return null;
+        }
     }
+}
 
-    const sol = req.query.sol || 1000; // Default sol (Martian day) if not provided
-    const rover = req.query.rover || 'curiosity'; // Default to 'curiosity' if not provided
-    const page = parseInt(req.query.page as string) || 1; // Default page number
-    const limit = parseInt(req.query.limit as string) || 25; // Default limit per page
-    const endpoint = MARS_ROVER_ENDPOINT.replace('{rover}', rover as string);
+app.get('/nasa/mars-photos', async (req: Request, res: Response): Promise<void> => {
+    try {
+        const sol: number = parseInt(req.query.sol as string, 10) || 1000;
+        const page: number = parseInt(req.query.page as string, 10) || 1;
+        const rover: string = (req.query.rover as string) || 'curiosity';
 
-    const response = await axios.get(`${NASA_API_BASE_URL}${endpoint}?sol=${sol}&api_key=${NASA_API_KEY}`);
-    const photos = response.data.photos;
+        const photo = await MarsRoverService.fetchMarsRoverPhotos(sol, page, rover);
 
-    // Paginate results manually (as NASA API may return too many results)
-    const startIndex = (page - 1) * limit;
-    const paginatedPhotos = photos.slice(startIndex, startIndex + limit);
-
-    res.json({ photos: paginatedPhotos, page, limit, total: photos.length });
-  } catch (error) {
-    console.error('Error fetching Mars Rover photos:', error);
-    res.status(500).json({ error: 'Failed to fetch Mars Rover photos' });
-  }
+        if (photo) {
+            res.status(200).json({ photo, page });
+        } else {
+            res.status(404).json({ error: 'No photo found for this index' });
+        }
+    } catch (error) {
+        console.error('Error handling /nasa/mars-photos request:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Welcome to the Space Exploration API!' });
-});
-
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
