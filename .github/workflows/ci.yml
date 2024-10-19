@@ -1,0 +1,38 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Lint code
+      run: pnpm lint
+
+    - name: Run tests
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+      run: pnpm test
+
+    - name: Build project
+      run: pnpm build
