@@ -1,33 +1,25 @@
+// src/components/Loading.tsx
+
 import React from 'react';
-import {Box, CircularProgress, Typography} from '@mui/material';
+import { CircularProgress, Box, Typography } from '@mui/material';
 
 interface LoadingProps {
-    text: string;
+    message?: string;
 }
 
-const Loading: React.FC<LoadingProps> = ({text}) => {
+const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => {
     return (
         <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '300px',
-                animation: 'fade-in 0.5s ease-in-out',
-            }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100vh"
+            sx={{ textAlign: 'center' }}
         >
-            <CircularProgress size={50} sx={{color: '#1976d2', marginBottom: '1rem'}}/>
-            <Typography
-                variant="h6"
-                sx={{
-                    fontFamily: 'Roboto, sans-serif',
-                    color: '#1976d2',
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                }}
-            >
-                {text}
+            <CircularProgress size={60} />
+            <Typography variant="h6" sx={{ mt: 2 }}>
+                {message}
             </Typography>
         </Box>
     );
