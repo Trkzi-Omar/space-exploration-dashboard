@@ -1,85 +1,124 @@
-import React, { useEffect, useState } from 'react';
-import { Typography, Button, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {Typography, Box, Snackbar, IconButton, useTheme} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Loading from "./Loading.tsx";
 
 interface MarsPhoto {
     id: number;
     img_src: string;
     earth_date: string;
-    camera: {
-        full_name: string;
-    };
     rover: {
         name: string;
     };
 }
 
 const MarsRoverGallery: React.FC = () => {
-    const [photo, setPhoto] = useState<MarsPhoto | null>(null);
-    const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [photos, setPhotos] = useState<MarsPhoto[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const theme = useTheme();
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
-        const fetchPhoto = async () => {
+        const fetchPhotos = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${backendUrl}/nasa/mars-photos`, {
-                    params: { sol: 1000, page },
-                });
-                if (response.status === 200 && response.data && response.data.photo) {
-                    setPhoto(response.data.photo);
-                    setTotal(response.data.total || 0);
-                } else {
-                    setPhoto(null);
-                }
+                const response = await axios.get(`${backendUrl}/nasa/mars-photos?sol=1000&page=1`);
+                setPhotos(response.data.photos || []);
             } catch (error) {
-                console.error('Error fetching Mars Rover photo:', error);
-                setPhoto(null);
+                console.error('Error fetching Mars Rover photos:', error);
+                setError('Failed to load Mars Rover photos. Please try again later.');
             } finally {
                 setLoading(false);
             }
         };
+        fetchPhotos();
+    }, [backendUrl]);
 
-        fetchPhoto();
-    }, [backendUrl, page]);
-
-    const handleNextPage = () => {
-        if (page < total) {
-            setPage((prevPage) => prevPage + 1);
-        }
-    };
-
-    const handlePrevPage = () => {
-        if (page > 1) {
-            setPage((prevPage) => prevPage - 1);
-        }
+    const handleCloseError = () => {
+        setError(null);
     };
 
     return (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
+        <Box
+            sx={{
+                textAlign: 'center',
+                padding: theme.spacing(4),
+                backgroundColor: theme.palette.background.paper,
+                borderRadius: theme.shape.borderRadius,
+                maxWidth: '1000px',
+                margin: 'auto',
+                boxShadow: theme.shadows[3],
+                color: theme.palette.text.primary,
+            }}
+        >
+            <Typography variant="h2" sx={{ marginBottom: theme.spacing(4), color: theme.palette.text.primary }}>
+                Mars Rover Photo Gallery
+            </Typography>
+
             {loading ? (
-                <CircularProgress />
-            ) : photo ? (
-                <div>
-                    <img src={photo.img_src} alt={`Mars Rover: ${photo.rover.name}`} style={{ maxWidth: '100%', maxHeight: '500px' }} />
-                    <Typography variant="h6" gutterBottom>
-                        {photo.camera.full_name} - {photo.earth_date}
-                    </Typography>
-                    <div style={{ marginTop: '20px' }}>
-                        <Button variant="contained" onClick={handlePrevPage} disabled={page === 1} style={{ marginRight: '10px' }}>
-                            Previous
-                        </Button>
-                        <Button variant="contained" onClick={handleNextPage} disabled={page >= total}>
-                            Next
-                        </Button>
-                    </div>
-                </div>
+                <Loading message="Fetching Mars Rover photos..." />
             ) : (
-                <Typography variant="body1">No photo available</Typography>
+                <>
+                    {photos.length > 0 ? (
+                        <Slider
+                            dots={true}
+                            infinite={true}
+                            speed={500}
+                            slidesToShow={1}
+                            slidesToScroll={1}
+                            autoplay={true}
+                            autoplaySpeed={3000}
+                            adaptiveHeight={true}>
+                            {photos.map((photo) => (
+                                <Box key={photo.id} sx={{ padding: theme.spacing(2) }}>
+                                    <img
+                                        src={photo.img_src}
+                                        alt={`Mars Rover - ${photo.rover.name}`}
+                                        style={{
+                                            width: '100%',
+                                            maxWidth: '600px',
+                                            borderRadius: theme.shape.borderRadius,
+                                            marginBottom: theme.spacing(2),
+                                            boxShadow: theme.shadows[1], // Added to enhance image visibility
+                                        }}
+                                    />
+                                    <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
+                                        Rover: {photo.rover.name} | Earth Date: {photo.earth_date}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Slider>
+                    ) : (
+                        <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
+                            No photos available.
+                        </Typography>
+                    )}
+                </>
             )}
-        </div>
+
+            <Snackbar
+                open={!!error}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                message={error}
+                action={
+                    <IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseError}>
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                }
+                sx={{ backgroundColor: theme.palette.error.main }}
+            />
+
+            <Box sx={{ marginTop: theme.spacing(5) }}>
+                <StackOverview />
+                <TechnologyOverview />
+            </Box>
+        </Box>
     );
 };
 
