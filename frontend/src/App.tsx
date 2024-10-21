@@ -5,6 +5,8 @@ import theme from "./theme.ts";
 import TechnologyOverview from "./components/TechnologyOverview.tsx";
 import {Helmet} from 'react-helmet';
 import WhoAmI from "./components/WhoAmI.tsx";
+import MarsRoverGallery from "./components/MarsRoverGallery.tsx";
+import Navbar from "./components/NavBar.tsx";
 
 interface ApodData {
     title: string;
@@ -32,6 +34,9 @@ function App() {
                 <meta name="description"
                       content="Explore Mars rover photos and NASA's Astronomy Picture of the Day with this interactive dashboard."/>
             </Helmet>
+
+            <Navbar/>
+            
             <WhoAmI/>
 
             <Box sx={{width: '100vw', color: '#fff'}}>
@@ -75,7 +80,7 @@ function App() {
                         )}
                     </Box>
                 </Box>
-
+                <MarsRoverGallery/>
                 <TechnologyOverview/>
             </Box>
         </ThemeProvider>

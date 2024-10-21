@@ -48,12 +48,9 @@ const MarsRoverGallery: React.FC = () => {
             sx={{
                 textAlign: 'center',
                 padding: theme.spacing(4),
-                backgroundColor: theme.palette.background.paper,
-                borderRadius: theme.shape.borderRadius,
                 maxWidth: '1000px',
                 margin: 'auto',
-                boxShadow: theme.shadows[3],
-                color: theme.palette.text.primary,
+                color: theme.palette.text.secondary,
             }}
         >
             <Typography variant="h2" sx={{ marginBottom: theme.spacing(4), color: theme.palette.text.primary }}>
@@ -114,10 +111,6 @@ const MarsRoverGallery: React.FC = () => {
                 sx={{ backgroundColor: theme.palette.error.main }}
             />
 
-            <Box sx={{ marginTop: theme.spacing(5) }}>
-                <StackOverview />
-                <TechnologyOverview />
-            </Box>
         </Box>
     );
 };

@@ -152,7 +152,7 @@ app.get('/nasa/apod', async (req: Request, res: Response) => {
         const response = await axios.get<ApodResponse>(
             `${NASA_API_BASE_URL}${APOD_ENDPOINT}?api_key=${NASA_API_KEY}`,
             {
-                timeout: 60000
+                timeout: 60000,
             }
         );
         //const response = await fetch(`${NASA_API_BASE_URL}${APOD_ENDPOINT}?api_key=${NASA_API_KEY}`);

@@ -26,7 +26,7 @@ const themeOptions: ThemeOptions = {
             default: '#F0E3D2', // Light sand, for cards and containers
             paper: '#F4A26181', // Desert Sand, for backgrounds
         },
-        text: {
+            text: {
             primary: '#FFFFFF', // White, for text on darker backgrounds
             secondary: '#333333', // Dark grey, for text on lighter backgrounds
         },
