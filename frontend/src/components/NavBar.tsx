@@ -12,7 +12,7 @@ import {
     Toolbar,
     Typography
 } from '@mui/material';
-import { alpha, styled, useTheme } from '@mui/system';
+import { alpha, styled, useTheme, Theme } from '@mui/system';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { Icon } from "@iconify/react";
@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 const Navbar: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const theme = useTheme();
+    const theme :Theme | any= useTheme();
 
     // Handle drawer open/close
     const toggleDrawer = (open: boolean) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import {CssBaseline, ThemeProvider} from '@mui/material';
 import theme from "./theme.ts";
 import TechnologyOverview from "./components/TechnologyOverview.tsx";
@@ -9,23 +8,7 @@ import Navbar from "./components/NavBar.tsx";
 import './App.css'
 import Apod from "./components/Apod.tsx";
 
-interface ApodData {
-    title: string;
-    explanation: string;
-    url: string;
-    date: string;
-}
-
 function App() {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-    React.useEffect(() => {
-        fetch(`${backendUrl}/nasa/apod`)
-            .then((response) => response.json())
-            .then((data) => setApodData(data))
-            .catch((error) => console.error('Error fetching APOD data:', error));
-    }, [backendUrl]);
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>

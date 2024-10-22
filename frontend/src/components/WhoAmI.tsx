@@ -1,4 +1,3 @@
-import React from 'react';
 import {Box, Button, Typography} from '@mui/material';
 import theme from '../theme';
 import {motion} from 'framer-motion';
@@ -37,7 +36,8 @@ const WhoAmI = () => {
                             opacity: 1,
                         }}
                     >
-                        <span style={{fontWeight:500}}>Hello 👋, </span><br/> <span style={{fontWeight: 500}}>I'm </span>Omar Trkzi
+                        <span style={{fontWeight: 500}}>Hello 👋, </span><br/> <span
+                        style={{fontWeight: 500}}>I'm </span>Omar Trkzi
                     </Typography>
                     <img width={"120px"} src={profilePictue} alt={"Omar Trkzi"}/>
                 </Box>

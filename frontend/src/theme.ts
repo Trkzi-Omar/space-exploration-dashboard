@@ -14,7 +14,7 @@ declare module '@mui/material/styles' {
     }
 }
 
-const themeOptions: ThemeOptions = {
+const themeOptions: ThemeOptions | any = {
     palette: {
         primary: {
             main: '#B53C28', // Mars Red, main color to represent the Martian landscape
@@ -39,6 +39,7 @@ const themeOptions: ThemeOptions = {
     },
     typography: {
         fontFamily: 'Roboto, Arial, sans-serif',
+        fontWeightBold:700,
         h1: {
             fontSize: '2rem',
             fontWeight: 700,

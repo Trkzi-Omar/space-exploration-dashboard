@@ -57,9 +57,9 @@ const MarsRoverGallery: React.FC = () => {
         >
             <Typography variant="h3" sx={{
                 paddingTop:theme.spacing(3),
-                fontWeight: theme.typography.h4.fontWeight,
+                fontWeight: theme.typography.fontWeightBold,
                 marginBottom: theme.spacing(4),
-                color: theme.palette.text.senodary
+                color: theme.palette.text.secondary
             }}>
                 Mars Rover Photo Gallery
             </Typography>

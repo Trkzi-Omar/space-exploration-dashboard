@@ -1,9 +1,25 @@
 import {Box, Typography} from "@mui/material";
 import Loading from "./Loading.tsx";
-import React from "react";
+import {useEffect, useState} from "react";
+
+interface ApodData {
+    title: string;
+    explanation: string;
+    url: string;
+    date: string;
+}
 
 const Apod = () => {
-    const [apodData, setApodData] = React.useState<ApodData | null>(null);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    useEffect(() => {
+        fetch(`${backendUrl}/nasa/apod`)
+            .then((response) => response.json())
+            .then((data) => setApodData(data))
+            .catch((error) => console.error('Error fetching APOD data:', error));
+    }, [backendUrl]);
+
+    const [apodData, setApodData] = useState<ApodData | null>(null);
     return <Box
         id={"apod"}
         sx={{

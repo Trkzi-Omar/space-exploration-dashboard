@@ -1,11 +1,10 @@
-import React from 'react';
-import { CircularProgress, Box, Typography, useTheme } from '@mui/material';
+import {Box, CircularProgress, Typography, useTheme} from '@mui/material';
 
 interface LoadingProps {
     message?: string;
 }
 
-const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => {
+const Loading: React.FC<LoadingProps> = ({message = "Loading..."}) => {
     const theme = useTheme();
 
     return (
@@ -14,10 +13,10 @@ const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            sx={{ textAlign: 'center', }}
+            sx={{textAlign: 'center',}}
         >
-            <CircularProgress size={60} thickness={4} color="secondary" />
-            <Typography variant="h6" sx={{ marginTop: theme.spacing(2), color: theme.palette.text.secondary }}>
+            <CircularProgress size={60} thickness={4} color="secondary"/>
+            <Typography variant="h6" sx={{marginTop: theme.spacing(2), color: theme.palette.text.secondary}}>
                 {message}
             </Typography>
         </Box>
