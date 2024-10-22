@@ -14,11 +14,10 @@ const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            height="100vh"
-            sx={{ textAlign: 'center', backgroundColor: theme.palette.background.paper }}
+            sx={{ textAlign: 'center', }}
         >
             <CircularProgress size={60} thickness={4} color="secondary" />
-            <Typography variant="h6" sx={{ marginTop: theme.spacing(2), color: theme.palette.text.primary }}>
+            <Typography variant="h6" sx={{ marginTop: theme.spacing(2), color: theme.palette.text.secondary }}>
                 {message}
             </Typography>
         </Box>

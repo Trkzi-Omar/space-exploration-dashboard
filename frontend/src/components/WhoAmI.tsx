@@ -1,6 +1,9 @@
 import React from 'react';
 import {Box, Button, Typography} from '@mui/material';
 import theme from '../theme';
+import {motion} from 'framer-motion';
+import {Icon} from '@iconify/react';
+import profilePictue from '../../public/omar-trkzi-profile-picture.webp'
 
 const WhoAmI = () => {
     const handleLinkedInClick = () => {
@@ -8,36 +11,84 @@ const WhoAmI = () => {
     };
 
     return (
-        <Box sx={{textAlign: 'center', padding: theme.spacing(4), maxWidth: '800px', margin: '0 auto'}}>
-            <Typography variant="h4" gutterBottom>
-                Hi, I'm Omar Trkzi
-            </Typography>
-            <Typography variant="body1" paragraph>
-                I'm a passionate front-end engineer with a focus on crafting seamless and engaging user experiences.
-                With expertise in TypeScript, React, and modern web development technologies, I thrive on solving
-                complex challenges and building products that delight users. My work combines thoughtful design with
-                efficient code, leveraging tools like Tailwind CSS, MUI, and Vercel for powerful and scalable
-                solutions.
-            </Typography>
-            <Typography variant="body1" paragraph>
-                I've worked on various projects ranging from interactive web applications to data-driven dashboards.
-                Through these projects, I continuously challenge myself to think critically about both user needs
-                and technical implementations. My passion for space and technology is evident in this Space
-                Exploration Dashboard, where I bring together informative data and a visually immersive experience.
-            </Typography>
-            <Button
-                variant="contained"
-                onClick={handleLinkedInClick}
-                sx={{
-                    background: "#0A66C2",
-                    color: '#faf0f8',
-                    '&:hover': {background: "#023e8a", color: "white"},
-                    fontWeight: 600,
-                    marginTop: theme.spacing(2)
-                }}
+        <Box
+            id={"about"}
+            sx={{
+                textAlign: 'center',
+                paddingTop: theme.spacing(12),
+                paddingBottom: theme.spacing(10),
+                paddingX: theme.spacing(2),
+                maxWidth: '800px',
+                margin: '0 auto',
+            }}
+        >
+            <motion.div
+                initial={{opacity: 0, y: 40}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 1, ease: 'easeOut'}}
             >
-                Let's talk on LinkedIn
-            </Button>
+                <Box display={"flex"} justifyContent={"center"} marginBottom={2} alignItems={"center"} gap={"2em"}>
+                    <Typography
+                        variant="h4"
+                        gutterBottom
+                        sx={{
+                            transform: 'translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)',
+                            transformStyle: 'preserve-3d',
+                            opacity: 1,
+                        }}
+                    >
+                        <span style={{fontWeight:500}}>Hello 👋, </span><br/> <span style={{fontWeight: 500}}>I'm </span>Omar Trkzi
+                    </Typography>
+                    <img width={"120px"} src={profilePictue} alt={"Omar Trkzi"}/>
+                </Box>
+            </motion.div>
+            <motion.div
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 1, delay: 0.5, ease: 'easeOut'}}
+            >
+                <Typography variant="body1" paragraph>
+                    I'm a <b>software engineer</b> with expertise in <b>TypeScript</b>, <b>React</b>, and modern web
+                    development
+                    technologies.
+                </Typography>
+            </motion.div>
+            <motion.div
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 1, delay: 1, ease: 'easeOut'}}
+            >
+                <Typography variant="body2" paragraph>
+                    I build efficient, high-quality applications that deliver seamless and engaging user experiences. By
+                    focusing on both design and functionality, I create software that solves real problems and leaves
+                    users satisfied, on projects of all sizes.
+                </Typography>
+            </motion.div>
+            <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                transition={{duration: 1, delay: 1.3, ease: 'easeInOut'}}
+            >
+                <Button
+                    variant="contained"
+                    onClick={handleLinkedInClick}
+                    sx={{
+                        background: "#faf0f8",
+                        color: "#0A66C2",
+                        '&:hover': {
+                            background: "#0A66C2",
+                            color: "#faf0f8",
+                            filter: "drop-shadow(0 0 0.5em #0A66C28a)"
+
+                        },
+                        fontWeight: 600,
+                        marginTop: theme.spacing(2),
+                        transition: 'all 0.3s ease',
+                    }}
+                >
+                    Let's Connect&nbsp;<Icon icon="devicon:linkedin"/>
+                </Button>
+            </motion.div>
         </Box>
     );
 };

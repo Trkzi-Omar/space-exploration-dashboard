@@ -45,7 +45,7 @@ const themeOptions: ThemeOptions = {
             color: '#FFFFFF', // White, for headers
         },
         h4: {
-            fontWeight: 700,
+            fontWeight: 600,
         },
         body1: {
             fontSize: '1rem',

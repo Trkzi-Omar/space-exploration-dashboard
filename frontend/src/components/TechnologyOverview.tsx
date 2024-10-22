@@ -66,9 +66,11 @@ const TechnologyOverview: React.FC = () => {
             maxWidth: '1200px',
             margin: 'auto',
             color: theme.palette.text.primary,
+            paddingTop:theme.spacing(18),
           }}
+          id={'technologies'}
       >
-        <Typography variant="h4" gutterBottom sx={{color:theme.palette.text.secondary, marginBottom: theme.spacing(2), fontWeight: theme.typography.h4.fontWeight }}>
+        <Typography variant="h3" gutterBottom sx={{color:theme.palette.text.secondary, marginBottom: theme.spacing(2), fontWeight: theme.typography.h4.fontWeight }}>
           Technologies Used
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: theme.spacing(4), color: theme.palette.text.secondary }}>
