@@ -4,6 +4,7 @@ import cors from 'cors';
 import axios, {AxiosError} from 'axios';
 import dotenv from 'dotenv';
 import * as dns from "dns";
+import path from 'path';
 
 dotenv.config();
 dns.setDefaultResultOrder('ipv4first')
@@ -14,6 +15,9 @@ const NASA_API_BASE_URL: string = process.env.NASA_API_BASE_URL || '';
 const NASA_API_KEY: string = process.env.NASA_API_KEY || '';
 const MARS_ROVER_ENDPOINT: string = process.env.MARS_ROVER_ENDPOINT || '';
 const APOD_ENDPOINT = process.env.APOD_ENDPOINT || '';
+
+//@ts-ignore
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 // In-memory cache object
 interface CacheData {
@@ -112,7 +116,7 @@ export class MarsRoverService {
     }
 }
 
-app.get('/nasa/mars-photos', async (req: Request, res: Response): Promise<void> => {
+app.get('/api/nasa/mars-photos', async (req: Request | any, res: Response | any,): Promise<void> => {
     try {
         const sol: number = parseInt(req.query.sol as string, 10) || 1000;
         const page: number = parseInt(req.query.page as string, 10) || 1;
@@ -145,7 +149,7 @@ interface ApodResponse {
 }
 
 // Endpoint to fetch Astronomy Picture of the Day (APOD)
-app.get('/nasa/apod', async (req: Request, res: Response) => {
+app.get('/api/nasa/apod', async (req: Request | any, res: Response | any,) => {
     try {
         console.log(`QUERYING :-<<<<>>>>>>>>\n\n${NASA_API_BASE_URL}${APOD_ENDPOINT}?api_key=${NASA_API_KEY}\n\n`)
 
@@ -170,7 +174,7 @@ app.get('/nasa/apod', async (req: Request, res: Response) => {
 
 
 // Endpoint to get Mars Rover manifest
-app.get('/nasa/rover-manifest', async (req: Request, res: Response): Promise<void> => {
+app.get('/api/nasa/rover-manifest', async (req: Request | any, res: Response | any,): Promise<void> => {
     try {
         const rover: string = (req.query.rover as string) || 'curiosity';
 
@@ -188,6 +192,12 @@ app.get('/nasa/rover-manifest', async (req: Request, res: Response): Promise<voi
         res.status(500).json({error: 'Internal server error'});
     }
 });
+
+// Catch-all handler to serve the frontend for any other route
+app.get('*', (req: Request | any, res: Response | any,) => {
+    res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
+});
+
 
 // Start the server
 app.listen(PORT, () => {

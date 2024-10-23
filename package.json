@@ -1,12 +1,26 @@
 {
   "name": "space-exploration-dashboard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Dashboard using Nasa API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pnpm build:backend && pnpm build:frontend",
+    "build:backend": "cd backend && pnpm run build",
+    "build:frontend": "cd frontend && pnpm run build",
+    "dev": "pnpm dev:backend & pnpm dev:frontend",
+    "dev:backend": "cd backend && pnpm dev",
+    "dev:frontend": "cd frontend && pnpm dev",
+    "postinstall": "pnpm --filter backend install && pnpm --filter frontend install"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Omar Trkzi",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trkzi-Omar/space-exploration-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Trkzi-Omar/space-exploration-dashboard/issues"
+  },
+  "homepage": "https://github.com/Trkzi-Omar/space-exploration-dashboard#readme"
 }

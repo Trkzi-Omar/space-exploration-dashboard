@@ -1,0 +1,19 @@
+{
+  "builds": [
+    {
+      "src": "dist/**",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ],
+  "build": {
+    "env": {
+      "VITE_API_URL": "https://space-exploration-backend.vercel.app/api"
+    }
+  }
+}
