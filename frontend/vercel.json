@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "dist/**",
+      "src": "package.json",
       "use": "@vercel/static-build"
     }
   ],
@@ -11,9 +11,7 @@
       "dest": "/dist/$1"
     }
   ],
-  "build": {
-    "env": {
-      "VITE_API_URL": "https://space-exploration-backend.vercel.app/api"
-    }
-  }
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install",
+  "outputDirectory": "dist"
 }
