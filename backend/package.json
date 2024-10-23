@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "NODE_ENV=production node dist/index.js",
+    "start:dev": "ts-node src/index.ts",
     "build": "tsc",
     "test": "jest --config jest.config.ts"
   },
