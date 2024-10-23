@@ -193,10 +193,10 @@ app.get('/api/nasa/rover-manifest', async (req: Request | any, res: Response | a
     }
 });
 
-// Catch-all handler to serve the frontend for any other route
-app.get('*', (req: Request | any, res: Response | any,) => {
+/** Uncomment when deploying as a monorepo*/
+/*app.get('*', (req: Request | any, res: Response | any,) => {
     res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
-});
+});*/
 
 
 // Start the server

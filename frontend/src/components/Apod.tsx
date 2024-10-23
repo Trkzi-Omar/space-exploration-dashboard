@@ -13,7 +13,7 @@ const Apod = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
-        fetch(`${backendUrl}/nasa/apod`)
+        fetch(`${backendUrl}/api/nasa/apod`)
             .then((response) => response.json())
             .then((data) => setApodData(data))
             .catch((error) => console.error('Error fetching APOD data:', error));

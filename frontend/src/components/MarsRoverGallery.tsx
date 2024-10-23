@@ -27,7 +27,7 @@ const MarsRoverGallery: React.FC = () => {
         const fetchPhotos = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${backendUrl}/nasa/mars-photos?sol=1000&page=1`);
+                const response = await axios.get(`${backendUrl}/api/nasa/mars-photos?sol=1000&page=1`);
                 setPhotos(response.data.photos || []);
             } catch (error) {
                 console.error('Error fetching Mars Rover photos:', error);
