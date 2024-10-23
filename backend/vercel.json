@@ -9,10 +9,8 @@
     {
       "src": "/api/(.*)",
       "dest": "/src/index.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
     }
-  ]
+  ],
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install"
 }
