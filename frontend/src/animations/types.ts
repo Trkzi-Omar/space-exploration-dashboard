@@ -1,19 +1,7 @@
-import { Variants } from 'framer-motion';
+import { Target, Transition } from 'framer-motion';
 
-export interface AnimationVariant extends Variants {
-    initial: {
-        opacity?: number;
-        y?: number;
-        scale?: number;
-    };
-    animate: {
-        opacity?: number;
-        y?: number;
-        scale?: number;
-    };
-    transition?: {
-        duration?: number;
-        delay?: number;
-        staggerChildren?: number;
-    };
+export interface AnimationVariant {
+    initial: Target;
+    animate: Target;
+    transition?: Transition;
 } 

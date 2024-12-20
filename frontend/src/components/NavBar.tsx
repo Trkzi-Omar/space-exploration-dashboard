@@ -10,13 +10,10 @@ import {
     ListItem,
     ListItemText,
     Toolbar,
-    Typography
 } from '@mui/material';
-import { alpha, styled, useTheme, Theme } from '@mui/system';
+import { alpha, styled, useTheme } from '@mui/system';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import { Icon } from "@iconify/react";
-import { motion } from "framer-motion";
 import { groupBy } from '../utils/arrayUtils';
 import { Theme as MuiTheme } from '@mui/material/styles';
 

@@ -20,9 +20,8 @@ export const scaleIn: AnimationVariant = {
 
 export const staggerContainer: AnimationVariant = {
     initial: {},
-    animate: {
-        transition: {
-            staggerChildren: 0.1
-        }
+    animate: {},
+    transition: {
+        staggerChildren: 0.1
     }
 }; 

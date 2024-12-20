@@ -5,7 +5,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Loading from "./Loading.tsx";
 import { motion } from 'framer-motion';
 import { scaleIn, fadeIn } from '../animations';
 import LoadingSkeleton from './LoadingSkeleton.tsx';
