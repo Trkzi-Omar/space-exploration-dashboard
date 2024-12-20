@@ -17,11 +17,31 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
+import { groupBy } from '../utils/arrayUtils';
+import { Theme as MuiTheme } from '@mui/material/styles';
+
+interface NavItem {
+    label: string;
+    href: string;
+    group: string;
+}
+
+const navItems: NavItem[] = [
+    { label: 'Home', href: '#home', group: 'main' },
+    { label: 'About', href: '#about', group: 'main' },
+    { label: 'Daily Picture', href: '#apod', group: 'features' },
+    { label: 'Mars Gallery', href: '#mars', group: 'features' },
+    { label: 'Technologies', href: '#technologies', group: 'info' },
+];
+
+interface Theme extends MuiTheme {
+    // Add any custom theme properties here if needed
+}
 
 const Navbar: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const theme :Theme | any= useTheme();
+    const theme = useTheme<Theme>();
 
     // Handle drawer open/close
     const toggleDrawer = (open: boolean) => {
@@ -39,7 +59,7 @@ const Navbar: React.FC = () => {
     }, []);
 
     // Custom styled components for better control over the AppBar style
-    const StyledAppBar = styled(AppBar)(({ transparent }: { transparent: boolean }) => ({
+    const StyledAppBar = styled(AppBar)<{ transparent: boolean }>(({ transparent }) => ({
         background: alpha(theme.palette.background.paper, transparent ? 0.3 : 0.9),
         color: transparent ? theme.palette.text.secondary : theme.palette.text.primary,
         boxShadow: theme.shadows[4],
@@ -53,58 +73,96 @@ const Navbar: React.FC = () => {
 
     return (
         <StyledAppBar position="sticky" transparent={isScrolled}>
-            <Toolbar sx={{ alignItems: 'center', padding: theme.spacing(2, 2) }}>
+            <Toolbar 
+                sx={{ 
+                    maxWidth: '1200px',
+                    width: '100%',
+                    margin: '0 auto',
+                    padding: {
+                        xs: '0 24px',
+                        sm: '0 32px',
+                        md: '0 48px',
+                    },
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    // Following Law of Common Region
+                    '& .MuiButton-root': {
+                        mx: 0.5,
+                        transition: 'all 0.2s ease-in-out',
+                        // Following Fitts's Law - increase clickable area
+                        padding: '8px 16px',
+                    }
+                }}
+            >
+                {/* Mobile menu */}
                 <IconButton
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    sx={{ mr: theme.spacing(2), display: { xs: 'flex', md: 'none' } }}
+                    sx={{ 
+                        position: 'absolute',
+                        left: { xs: '24px', sm: '32px', md: '48px' },
+                        display: { xs: 'flex', md: 'none' },
+                        // Following Fitts's Law
+                        padding: '12px',
+                    }}
                     onClick={() => toggleDrawer(true)}
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: theme.typography.fontWeightBold }}>
-                    Space Exploration Dashboard
-                </Typography>
-                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: theme.spacing(3) }}>
-                    <Button color="inherit" sx={{ fontWeight: 700 }} href="#home">
-                        Home
-                    </Button>
-                    <Button color="inherit" sx={{ fontWeight: 700 }} href="#about">
-                        About
-                    </Button>
-                    <Button color="inherit" sx={{ fontWeight: 700 }} href="#apod">
-                        Daily Picture
-                    </Button>
-                    <Button color="inherit" sx={{ fontWeight: 700 }} href="#mars">
-                        Mars Gallery
-                    </Button>
-                    <Button color="inherit" sx={{ fontWeight: 700 }} href="#technologies">
-                        Technologies
-                    </Button>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.3, ease: 'easeInOut' }}
-                    >
-                        <Button
-                            variant="contained"
-                            onClick={handleLinkedInClick}
-                            sx={{
-                                background: "#faf0f8",
-                                color: "#0A66C2",
-                                '&:hover': {
-                                    background: "#0A66C2",
-                                    color: "#faf0f8",
-                                    filter: "drop-shadow(0 0 0.6em #0A66C2aa)"
-                                },
-                                fontWeight: 600,
-                                transition: 'all 0.3s ease',
-                            }}
-                        >
-                            LinkedIn&nbsp;<Icon icon="devicon:linkedin" />
-                        </Button>
-                    </motion.div>
+
+                {/* Desktop navigation */}
+                <Box sx={{ 
+                    display: { xs: 'none', md: 'flex' }, 
+                    gap: theme.spacing(3),
+                    justifyContent: 'center',
+                    // Following Law of Proximity
+                    '& .nav-group': {
+                        display: 'flex',
+                        gap: theme.spacing(4),
+                    },
+                    '& .MuiButton-root': {
+                        color: theme.palette.text.primary,
+                        '&:hover': {
+                            backgroundColor: 'transparent',
+                            color: theme.palette.primary.light,
+                        },
+                    }
+                }}>
+                    {Object.entries(groupBy(navItems, 'group')).map(([group, items]) => (
+                        <Box key={group} className="nav-group" sx={{ mx: theme.spacing(4) }}>
+                            {items.map((item) => (
+                                <Button
+                                    key={item.href}
+                                    color="inherit"
+                                    href={item.href}
+                                    sx={{ 
+                                        fontWeight: 700,
+                                        position: 'relative',
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            left: '50%',
+                                            width: 0,
+                                            height: 2,
+                                            bgcolor: theme.palette.primary.light,
+                                            transition: 'all 0.3s ease',
+                                            transform: 'translateX(-50%)',
+                                        },
+                                        '&:hover::after': {
+                                            width: '80%',
+                                        },
+                                        '&:hover': {
+                                            backgroundColor: 'transparent',
+                                        }
+                                    }}
+                                >
+                                    {item.label}
+                                </Button>
+                            ))}
+                        </Box>
+                    ))}
                 </Box>
             </Toolbar>
             <Drawer anchor="left" open={drawerOpen} onClose={() => toggleDrawer(false)}>
@@ -114,28 +172,62 @@ const Navbar: React.FC = () => {
                     onClick={() => toggleDrawer(false)}
                     onKeyDown={() => toggleDrawer(false)}
                 >
-                    <List sx={{fontWeight: 700}}>
-                        <ListItem  button component="a" href="#home">
-                            <ListItemText  primary="Home" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
-                        </ListItem>
-                        <ListItem  button component="a" href="#about">
-                            <ListItemText  primary="About" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
-                        </ListItem>
-                        <ListItem  button component="a" href="#apod">
-                            <ListItemText  primary="Daily Picture" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
-                        </ListItem>
-                        <ListItem  button component="a" href="#mars">
-                            <ListItemText  primary="Mars Gallery" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
-                        </ListItem>
-                        <ListItem  button component="a" href="#technologies">
-                            <ListItemText  primary="Technologies" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
-                        </ListItem>
-                        <ListItem  button onClick={handleLinkedInClick}>
-                            <ListItemText  primary="LinkedIn" sx={{ color: theme.palette.text.primary, fontWeight: 700}} />
+                    <List sx={{
+                        fontWeight: 700,
+                        '& .MuiListItem-root': {
+                            '&:hover': {
+                                backgroundColor: 'transparent',
+                                color: theme.palette.primary.light,
+                            },
+                            '& .MuiListItemText-root': {
+                                transition: 'color 0.3s ease',
+                            },
+                            '&:hover .MuiListItemText-root': {
+                                color: theme.palette.primary.light,
+                            },
+                        }
+                    }}>
+                        {navItems.map((item) => (
+                            <ListItem 
+                                key={item.href} 
+                                button 
+                                component="a" 
+                                href={item.href}
+                                sx={{
+                                    py: 2,
+                                    px: 3,
+                                }}
+                            >
+                                <ListItemText 
+                                    primary={item.label} 
+                                    sx={{ 
+                                        color: theme.palette.text.primary,
+                                        fontWeight: 700,
+                                    }} 
+                                />
+                            </ListItem>
+                        ))}
+                        <ListItem 
+                            button 
+                            onClick={handleLinkedInClick}
+                            sx={{
+                                py: 2,
+                                px: 3,
+                            }}
+                        >
+                            <ListItemText 
+                                primary="LinkedIn" 
+                                sx={{ 
+                                    color: theme.palette.text.primary,
+                                    fontWeight: 700,
+                                }} 
+                            />
                         </ListItem>
                     </List>
-                    <IconButton onClick={() => toggleDrawer(false)}
-                                sx={{ position: 'absolute', top: theme.spacing(1), right: theme.spacing(1) }}>
+                    <IconButton 
+                        onClick={() => toggleDrawer(false)}
+                        sx={{ position: 'absolute', top: theme.spacing(1), right: theme.spacing(1) }}
+                    >
                         <CloseIcon />
                     </IconButton>
                 </Box>

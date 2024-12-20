@@ -4,7 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <!-- Preload critical fonts -->
+    <link 
+      rel="preload" 
+      href="/fonts/roboto/Roboto-Regular.ttf" 
+      as="font" 
+      type="font/ttf" 
+      crossorigin
+    />
+    <link 
+      rel="preload" 
+      href="/fonts/roboto/Roboto-Bold.ttf" 
+      as="font" 
+      type="font/ttf" 
+      crossorigin
+    />
+    <!-- Add font-display swap -->
+    <style>
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/roboto/Roboto-Regular.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/fonts/roboto/Roboto-Bold.ttf') format('truetype');
+      }
+    </style>
+    <title>Space Exploration Dashboard</title>
   </head>
   <body>
     <div id="root"></div>
